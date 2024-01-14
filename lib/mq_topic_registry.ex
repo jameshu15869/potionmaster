@@ -47,7 +47,7 @@ defmodule Mq.TopicRegistry do
     if Map.has_key?(topics, topic) do
       {:reply, :already_exists, topics}
     else
-      {:ok, new_topic} = Mq.Topic.start_link([])
+      {:ok, new_topic} = DynamicSupervisor.start_child(Mq.TopicSupervisor, Mq.Topic)
       ref = Process.monitor(new_topic)
       refs = Map.put(refs, ref, topic)
       topics = Map.put(topics, topic, new_topic)
@@ -59,5 +59,19 @@ defmodule Mq.TopicRegistry do
   def handle_call({:remove_topic, topic}, _from, {topics, refs}) do
     topics = Map.delete(topics, topic)
     {:reply, :ok, {topics, refs}}
+  end
+
+  @impl true
+  def handle_info({:DOWN, ref, :process, _pid, _reason}, {topics, refs}) do
+    {topic, refs} = Map.pop(refs, ref)
+    topics = Map.delete(topics, topic)
+    {:noreply, {topics, refs}}
+  end
+
+  @impl true
+  def handle_info(msg, state) do
+    require Logger
+    Logger.debug("Error in TopicRegistry: #{inspect(msg)}")
+    {:noreply, state}
   end
 end

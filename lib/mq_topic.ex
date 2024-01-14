@@ -2,7 +2,7 @@ defmodule Mq.Topic do
   @moduledoc """
   Represents a single topic with a list of subscribers.
   """
-  use Agent
+  use Agent, restart: :temporary
 
   @doc """
   Starts a new Mq topic with an empty array.

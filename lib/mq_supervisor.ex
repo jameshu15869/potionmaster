@@ -8,7 +8,8 @@ defmodule Mq.Supervisor do
   @impl true
   def init(:ok) do
     children = [
-      {Mq.TopicRegistry, name: Mq.TopicRegistryInstance}
+      {Mq.TopicRegistry, name: Mq.TopicRegistryInstance},
+      {DynamicSupervisor, name: Mq.TopicSupervisor, strategy: :one_for_one}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
