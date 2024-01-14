@@ -31,26 +31,33 @@ defmodule Mq.TopicRegistry do
 
   @impl true
   def init(:ok) do
-    {:ok, %{}}
+    topics = %{}
+    refs = %{}
+    {:ok, {topics, refs}}
   end
 
   @impl true
-  def handle_call({:lookup, topic}, _from, topics) do
-    {:reply, Map.fetch(topics, topic), topics}
+  def handle_call({:lookup, topic}, _from, state) do
+    {topics, _} = state
+    {:reply, Map.fetch(topics, topic), state}
   end
 
   @impl true
-  def handle_call({:create_topic, topic}, _from, topics) do
+  def handle_call({:create_topic, topic}, _from, {topics, refs}) do
     if Map.has_key?(topics, topic) do
       {:reply, :already_exists, topics}
     else
       {:ok, new_topic} = Mq.Topic.start_link([])
-      {:reply, :ok, Map.put(topics, topic, new_topic)}
+      ref = Process.monitor(new_topic)
+      refs = Map.put(refs, ref, topic)
+      topics = Map.put(topics, topic, new_topic)
+      {:reply, :ok, {topics, refs}}
     end
   end
 
   @impl true
-  def handle_call({:remove_topic, topic}, _from, topics) do
-    {:reply, :ok, Map.delete(topics, topic)}
+  def handle_call({:remove_topic, topic}, _from, {topics, refs}) do
+    topics = Map.delete(topics, topic)
+    {:reply, :ok, {topics, refs}}
   end
 end

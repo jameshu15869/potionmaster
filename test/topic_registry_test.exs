@@ -32,4 +32,20 @@ defmodule Mq.TopicRegistryTest do
     Mq.Topic.remove(topic, "dummy subscriber")
     assert Mq.Topic.list(topic) == []
   end
+
+  # test "Remove topics on normal exit", %{registry: registry} do
+  #   Mq.TopicRegistry.create_topic(registry, "topic1")
+  #   {:ok, topic} = Mq.TopicRegistry.lookup(registry, "topic1")
+
+  #   Agent.stop(topic)
+  #   assert Mq.TopicRegistry.lookup(registry, "topic1") == :error
+  # end
+
+  # test "Remove topics on crashes", %{registry: registry} do
+  #   Mq.TopicRegistry.create_topic(registry, "topic1")
+  #   {:ok, topic} = Mq.TopicRegistry.lookup(registry, "topic1")
+
+  #   Agent.stop(topic, :shutdown)
+  #   assert Mq.TopicRegistry.lookup(registry, "topic1") == :error
+  # end
 end
