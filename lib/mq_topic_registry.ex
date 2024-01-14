@@ -14,10 +14,17 @@ defmodule Mq.TopicRegistry do
   end
 
   @doc """
-  Create a topic with `name` in the `server` registry
+  Create a topic with `name` in the `server` registry.
   """
   def create_topic(server, name) do
     GenServer.call(server, {:create_topic, name})
+  end
+
+  @doc """
+  Remove the topic with `name` from the `server` registry.
+  """
+  def remove_topic(server, name) do
+    GenServer.call(server, {:remove_topic, name})
   end
 
   # Server implementation
@@ -40,5 +47,10 @@ defmodule Mq.TopicRegistry do
       {:ok, new_topic} = Mq.Topic.start_link([])
       {:reply, :ok, Map.put(topics, topic, new_topic)}
     end
+  end
+
+  @impl true
+  def handle_call({:remove_topic, topic}, _from, topics) do
+    {:reply, :ok, Map.delete(topics, topic)}
   end
 end

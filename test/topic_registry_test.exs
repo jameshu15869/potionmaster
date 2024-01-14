@@ -16,6 +16,13 @@ defmodule Mq.TopicRegistryTest do
     assert Mq.Topic.list(pid) == []
   end
 
+  test "Remove topics", %{registry: registry} do
+    Mq.TopicRegistry.create_topic(registry, "topic1")
+    assert {:ok, _} = Mq.TopicRegistry.lookup(registry, "topic1")
+    Mq.TopicRegistry.remove_topic(registry, "topic1")
+    assert Mq.TopicRegistry.lookup(registry, "topic1") == :error
+  end
+
   test "Test subscribe", %{registry: registry} do
     Mq.TopicRegistry.create_topic(registry, "topic1")
     {:ok, topic} = Mq.TopicRegistry.lookup(registry, "topic1")
