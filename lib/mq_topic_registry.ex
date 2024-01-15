@@ -45,13 +45,13 @@ defmodule Mq.TopicRegistry do
   @impl true
   def handle_call({:create_topic, topic}, _from, {topics, refs}) do
     if Map.has_key?(topics, topic) do
-      {:reply, :already_exists, topics}
+      {:reply, topic, topics}
     else
       {:ok, new_topic} = DynamicSupervisor.start_child(Mq.TopicSupervisor, Mq.Topic)
       ref = Process.monitor(new_topic)
       refs = Map.put(refs, ref, topic)
       topics = Map.put(topics, topic, new_topic)
-      {:reply, :ok, {topics, refs}}
+      {:reply, new_topic, {topics, refs}}
     end
   end
 
