@@ -16,7 +16,8 @@ defmodule Mq.TopicTest do
     assert Mq.Topic.list(topic) == []
     Mq.Topic.add(topic, "dummy")
     Mq.Topic.add(topic, "dummy1")
-    assert Mq.Topic.list(topic) == ["dummy1", "dummy"]
+    assert Enum.member?(Mq.Topic.list(topic), "dummy")
+    assert Enum.member?(Mq.Topic.list(topic), "dummy1")
     Mq.Topic.remove(topic, "dummy1")
     assert Mq.Topic.list(topic) == ["dummy"]
   end

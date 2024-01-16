@@ -8,28 +8,28 @@ defmodule Mq.Topic do
   Starts a new Mq topic with an empty array.
   """
   def start_link(opts) do
-    Agent.start_link(fn -> [] end, opts)
+    Agent.start_link(fn -> MapSet.new() end, opts)
   end
 
   @doc """
   Gets all the subscribers of a topic.
   """
   def list(topic) do
-    Agent.get(topic, fn state -> state end)
+    Agent.get(topic, fn state -> MapSet.to_list(state) end)
   end
 
   @doc """
   Adds a subscriber to the specified topic.
   """
   def add(topic, subscriber) do
-    Agent.update(topic, &[subscriber | &1])
+    Agent.update(topic, fn state -> MapSet.put(state, subscriber) end)
   end
 
   @doc """
   Removes a subscriber from the specified topic.
   """
   def remove(topic, subscriber) do
-    Agent.update(topic, &Enum.filter(&1, fn x -> x != subscriber end))
+    Agent.update(topic, &MapSet.delete(&1, subscriber))
   end
 
   def publish_message(topic, topic_name, message) do
