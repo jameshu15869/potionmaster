@@ -31,4 +31,8 @@ defmodule Mq.Topic do
   def remove(topic, subscriber) do
     Agent.update(topic, &Enum.filter(&1, fn x -> x != subscriber end))
   end
+
+  def publish_message(topic, topic_name, message) do
+    list(topic) |> Enum.map(fn pid -> send(pid, {:topic_message, topic_name, message}) end)
+  end
 end

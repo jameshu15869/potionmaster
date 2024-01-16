@@ -27,6 +27,13 @@ defmodule Mq.TopicRegistry do
     GenServer.call(server, {:remove_topic, name})
   end
 
+  @doc """
+  Publish `message` to `topic`.
+  """
+  def publish(server, topic, message) do
+    GenServer.call(server, {:publish, topic, message})
+  end
+
   # Server implementation
 
   @impl true
@@ -59,6 +66,18 @@ defmodule Mq.TopicRegistry do
   def handle_call({:remove_topic, topic}, _from, {topics, refs}) do
     topics = Map.delete(topics, topic)
     {:reply, :ok, {topics, refs}}
+  end
+
+  @impl true
+  def handle_call({:publish, topic_name, message}, _from, {topics, refs}) do
+    if Map.has_key?(topics, topic_name) do
+      {:ok, topic_pid} = Map.fetch(topics, topic_name)
+
+      Mq.Topic.publish_message(topic_pid, topic_name, message)
+      {:reply, :ok, {topics, refs}}
+    else
+      {:reply, :error, {topics, refs}}
+    end
   end
 
   @impl true
