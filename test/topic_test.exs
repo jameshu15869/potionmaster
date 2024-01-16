@@ -2,7 +2,7 @@ defmodule Mq.TopicTest do
   use ExUnit.Case, async: true
 
   setup do
-    {:ok, topic} = Mq.Topic.start_link([])
+    {:ok, topic} = Mq.Topic.start_link("topic1", [])
     %{topic: topic}
   end
 
