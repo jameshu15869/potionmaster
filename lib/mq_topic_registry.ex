@@ -52,9 +52,15 @@ defmodule Mq.TopicRegistry do
   @impl true
   def handle_call({:create_topic, topic}, _from, {topics, refs}) do
     if Map.has_key?(topics, topic) do
-      {:reply, topic, topics}
+      {:ok, topic_pid} = Map.fetch(topics, topic)
+      {:reply, topic_pid, {topics, refs}}
     else
-      {:ok, new_topic} = DynamicSupervisor.start_child(Mq.TopicSupervisor, Mq.Topic)
+      {:ok, new_topic} =
+        DynamicSupervisor.start_child(Mq.TopicSupervisor, %{
+          id: Mq.Topic,
+          start: {Mq.Topic, :start_link, [topic, []]}
+        })
+
       ref = Process.monitor(new_topic)
       refs = Map.put(refs, ref, topic)
       topics = Map.put(topics, topic, new_topic)
@@ -73,7 +79,7 @@ defmodule Mq.TopicRegistry do
     if Map.has_key?(topics, topic_name) do
       {:ok, topic_pid} = Map.fetch(topics, topic_name)
 
-      Mq.Topic.publish_message(topic_pid, topic_name, message)
+      Mq.Topic.publish_message(topic_pid, message)
       {:reply, :ok, {topics, refs}}
     else
       {:reply, :error, {topics, refs}}
