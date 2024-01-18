@@ -1,6 +1,12 @@
 defmodule Mq.TopicRegistry do
+  @moduledoc"""
+  `TopicRegistry` is responsible for mapping topic names to the topic objects that they represent.
+  """
   use GenServer
 
+  @doc"""
+  Starts a new instance of a TopicRegistry GenServer.
+  """
   def start_link(opts) do
     GenServer.start_link(__MODULE__, :ok, opts)
   end

@@ -1,4 +1,8 @@
 defmodule Mq.Command do
+  @moduledoc"""
+  `Mq.Command` is responsible for parsing user input and sending the correct commands to the Mq's topics.
+  """
+
   @doc """
   Parses a string-encoded json (`line`) into a command tuple (:subscribe, :unsubscribe, or :publish).
 

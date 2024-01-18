@@ -1,6 +1,12 @@
 defmodule Mq.Supervisor do
+  @moduledoc"""
+  `Mq.Supervisor` is responsible for the Topic and TopicRegistry processes. This Supervisor is started as a child of the overall application supervisor.
+  """
   use Supervisor
 
+  @doc"""
+  Starts a new `Mq.Supervisor` process.
+  """
   def start_link(opts) do
     Supervisor.start_link(__MODULE__, :ok, opts)
   end

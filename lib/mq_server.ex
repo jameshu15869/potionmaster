@@ -1,4 +1,7 @@
 defmodule Mq.Server do
+  @moduledoc"""
+  Responsible for handling TCP connections between the Mq server and clients.
+  """
   require Logger
 
   @doc """
