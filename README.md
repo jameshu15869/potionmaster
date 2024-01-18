@@ -1,21 +1,21 @@
-# Mq
+# PotionMaster
 
-**TODO: Add description**
+PotionMaster is a Pub/Sub messaging server built in Elixir. Clients can connect to the server over TCP and information is transmitted in JSON format. PotionMaster is split into two main subcomponents - the TCP server and the systems that manage the topics. 
 
-## Installation
+Demo with a simple client written in Go:
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `mq` to your list of dependencies in `mix.exs`:
+![](media/mq_demo.gif)
 
-```elixir
-def deps do
-  [
-    {:mq, "~> 0.1.0"}
-  ]
-end
+## Development Guide
+Ensure that you have Elixir (Erlang is usually installed with Elixir as well) to develop this project. 
+
+Install dependencies
+
+```bash
+mix deps.get
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/mq>.
-
+To create a production build locally, run
+```bash
+mix release
+```
