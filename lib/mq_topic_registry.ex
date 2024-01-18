@@ -15,6 +15,8 @@ defmodule Mq.TopicRegistry do
 
   @doc """
   Create a topic with `name` in the `server` registry.
+
+  This method is idempotent.
   """
   def create_topic(server, name) do
     GenServer.call(server, {:create_topic, name})

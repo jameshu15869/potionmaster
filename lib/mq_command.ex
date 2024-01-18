@@ -36,21 +36,21 @@ defmodule Mq.Command do
   def run({:subscribe, topic_name}, client_pid) do
     lookup_helper(topic_name, fn topic_pid ->
       Mq.Topic.add(topic_pid, client_pid)
-      {:ok, "OK\r\n"}
+      {:ok, "OK"}
     end)
   end
 
   def run({:unsubscribe, topic_name}, client_pid) do
     lookup_helper(topic_name, fn topic_pid ->
       Mq.Topic.remove(topic_pid, client_pid)
-      {:ok, "OK\r\n"}
+      {:ok, "OK"}
     end)
   end
 
   def run({:publish, topic_name, message}, _client_pid) do
     lookup_helper(topic_name, fn topic_pid ->
       Mq.Topic.publish_message(topic_pid, message)
-      {:ok, "OK\r\n"}
+      {:ok, "OK"}
     end)
   end
 

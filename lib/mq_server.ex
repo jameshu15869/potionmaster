@@ -15,7 +15,7 @@ defmodule Mq.Server do
   defp message_listener(socket) do
     receive do
       {:topic_message, topic, message} ->
-        write_line(socket, {:ok, Jason.encode!(%{"topic" => topic, "message" => message})})
+        write_line(socket, {:ok, %{"topic" => topic, "body" => message}})
     end
 
     message_listener(socket)
@@ -51,23 +51,30 @@ defmodule Mq.Server do
     :gen_tcp.recv(socket, 0)
   end
 
+  defp write_line(socket, {:ok, %{"topic" => topic, "body" => body}}) do
+    msg =
+      "#{Jason.encode!(%{"status" => "message", "message" => %{"topic" => topic, "body" => body}})}"
+
+    :gen_tcp.send(socket, msg)
+  end
+
   defp write_line(socket, {:ok, text}) do
-    msg = Jason.encode!(%{"status" => "ok", "message" => "#{text}\r\n"})
+    msg = "#{Jason.encode!(%{"status" => "ok", "message" => "#{text}"})}"
     :gen_tcp.send(socket, msg)
   end
 
   defp write_line(socket, {:error, :unknown_command}) do
-    msg = Jason.encode!(%{"status" => "error", "message" => "UNKNOWN COMMAND\r\n"})
+    msg = "#{Jason.encode!(%{"status" => "error", "message" => "UNKNOWN COMMAND"})}"
     :gen_tcp.send(socket, msg)
   end
 
   defp write_line(socket, {:error, :bad_json_format}) do
-    msg = Jason.encode!(%{"status" => "error", "message" => "Bad JSON format\r\n"})
+    msg = "#{Jason.encode!(%{"status" => "error", "message" => "Bad JSON format"})}"
     :gen_tcp.send(socket, msg)
   end
 
   defp write_line(socket, {:error, :not_found}) do
-    msg = Jason.encode!(%{"status" => "error", "message" => "Not found\r\n"})
+    msg = "#{Jason.encode!(%{"status" => "error", "message" => "Not found"})}"
     :gen_tcp.send(socket, msg)
   end
 
@@ -76,7 +83,7 @@ defmodule Mq.Server do
   end
 
   defp write_line(socket, {:error, msg}) do
-    error_message = Jason.encode!(%{"status" => "error", "message" => "#{msg}\r\n"})
+    error_message = "#{Jason.encode!(%{"status" => "error", "message" => "#{msg}"})}"
     :gen_tcp.send(socket, error_message)
     exit(error_message)
   end
