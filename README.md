@@ -1,4 +1,4 @@
-# PotionMaster
+# Potionmaster
 
 PotionMaster is a Pub/Sub messaging server built in Elixir. Clients can connect to the server over TCP and information is transmitted in JSON format. PotionMaster is split into two main subcomponents - the TCP server and the systems that manage the topics. 
 
