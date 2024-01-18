@@ -4,7 +4,7 @@ PotionMaster is a Pub/Sub messaging server built in Elixir. Clients can connect 
 
 Demo with a simple client written in Go:
 
-![](media/mq_demo.gif)
+https://github.com/jameshu15869/potionmaster/assets/55058507/b30fc314-3785-423d-bb22-751c3ea119b0
 
 ## Development Guide
 Ensure that you have Elixir (Erlang is usually installed with Elixir as well) to develop this project. 
